@@ -7,18 +7,18 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using HW_TelegramChatTopTop;
 
 // Инициализация подключения к боту по ключу
-Token token= new Token();
-var botClient = new TelegramBotClient(token.token);
+
+string? key = Environment.GetEnvironmentVariable("telegram_first");
+var botClient = new TelegramBotClient(key);
 
 // Обозначение кнопок
 const string buttonEmployer = "/employer";
 const string buttonVacancy = "/all_vacancies";
 
 // Инициализация словаря с текущим статусом каждого чата
-Dictionary<long, UserState> _clientStates = new Dictionary<long, UserState>();
+ConcurrentDictionary<long, UserState> _clientStates = new ConcurrentDictionary<long, UserState>();
 
 // Токен отмены
 using CancellationTokenSource cts = new();
@@ -70,7 +70,7 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
                         if (result.Items.Length == 0) {
                             await SendTextMsg(message, "Нет таких работодателей!", botClient, cancellationToken);
                             // Удаление ключа
-                            _clientStates.Remove(update.Message.Chat.Id);
+                            _clientStates.TryRemove(update.Message.Chat.Id, out _);
                             return;
                         }
                         // Преобразование имён в строку
@@ -79,7 +79,7 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
                         // Отправко результата
                         await SendTextMsg(message, temp, botClient, cancellationToken);
                         // Удаление ключа
-                        _clientStates.Remove(update.Message.Chat.Id);
+                        _clientStates.TryRemove(update.Message.Chat.Id, out _);
                         break;
                     // Других вариантов пока нет
                     case State.None: return; 
