@@ -7,9 +7,11 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using HW_TelegramChatTopTop;
 
-// Инициализация подключения к боту по ключу 
-var botClient = new TelegramBotClient("6258704845:AAEPCBQFwE3yEuByZvrFR77qxwn5CZOSbVA");
+// Инициализация подключения к боту по ключу
+Token token= new Token();
+var botClient = new TelegramBotClient(token.token);
 
 // Обозначение кнопок
 const string buttonEmployer = "/employer";
